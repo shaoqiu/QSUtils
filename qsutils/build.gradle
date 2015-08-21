@@ -13,7 +13,7 @@ ext {
     siteUrl = 'https://github.com/shaoqiu/QSUtils'
     gitUrl = 'https://github.com/shaoqiu/QSUtils.git'
 
-    libraryVersion = '0.0.1'
+    libraryVersion = '0.0.3'
 
     developerId = 'shaoqiu'
     developerName = 'xushaoqiu'
