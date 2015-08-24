@@ -7,7 +7,12 @@ import android.view.ViewStub;
 import android.widget.Button;
 import android.widget.ImageView;
 
+import net.qiushao.qsutils.orm.DBAnnotationException;
+import net.qiushao.qsutils.orm.DBFactory;
+import net.qiushao.qsutils.orm.DBHelper;
+
 public class MainActivity extends AppCompatActivity {
+    private long id = 1;
 
 
     @Override
@@ -19,6 +24,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 showNetError();
+                addPerson();
             }
         });
     }
@@ -38,6 +44,21 @@ public class MainActivity extends AppCompatActivity {
     private void showNormal() {
         if (networkErrorView != null) {
             networkErrorView.setVisibility(View.GONE);
+        }
+    }
+
+    private void addPerson() {
+        Person person = new Person();
+        person.id = id++;
+        person.name = "name" + person.id;
+        person.age = 18;
+        person.weight = 520.1314;
+        person.marry = false;
+        try {
+            DBHelper db = DBFactory.getInstance(this).getDBHelper(Person.class);
+            db.insert(person);
+        } catch (DBAnnotationException e) {
+            e.printStackTrace();
         }
     }
 }
