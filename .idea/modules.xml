@@ -2,7 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/QSUtils.iml" filepath="$PROJECT_DIR$/QSUtils.iml" />
+      <module fileurl="file://$PROJECT_DIR$/QSAndroidUtils.iml" filepath="$PROJECT_DIR$/QSAndroidUtils.iml" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
       <module fileurl="file://$PROJECT_DIR$/qsutils/qsutils.iml" filepath="$PROJECT_DIR$/qsutils/qsutils.iml" />
     </modules>

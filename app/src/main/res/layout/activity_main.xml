@@ -5,36 +5,17 @@
     android:padding="8dp"
     tools:context=".MainActivity">
 
-    <include layout="@layout/menu" />
-
-    <ImageView
-        android:id="@+id/cd"
-        android:layout_width="100dp"
-        android:layout_height="100dp"
-        android:layout_marginTop="40dp"
-        android:clickable="true"
-        android:src="@mipmap/cd" />
-
-    <TextView
-        android:id="@+id/song"
+    <Button
+        android:id="@+id/insert"
+        android:text="insert"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignTop="@id/cd"
-        android:layout_marginLeft="10dp"
-        android:layout_marginTop="30dp"
-        android:layout_toRightOf="@id/cd"
-        android:text="歌名" />
+        android:layout_height="wrap_content" />
 
-    <TextView
+    <Button
+        android:id="@+id/query"
+        android:text="query"
+        android:layout_below="@id/insert"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignLeft="@id/song"
-        android:layout_below="@id/song"
-        android:text="演唱者" />
+        android:layout_height="wrap_content" />
 
-    <ViewStub
-        android:id="@+id/network_error_viewstub"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout="@layout/network_error" />
 </RelativeLayout>

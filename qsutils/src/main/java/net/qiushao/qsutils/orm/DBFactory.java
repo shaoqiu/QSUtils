@@ -2,6 +2,8 @@ package net.qiushao.qsutils.orm;
 
 import android.content.Context;
 
+import net.qiushao.qsutils.orm.annotation.Database;
+
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
@@ -26,6 +28,7 @@ public class DBFactory {
 
     private DBFactory(Context context) {
         this.context = context.getApplicationContext();
+        dbMap = new ConcurrentHashMap<String, DBHelper>();
     }
 
     public synchronized DBHelper getDBHelper(Class<?> T) throws DBAnnotationException {
