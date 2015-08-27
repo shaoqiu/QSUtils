@@ -30,6 +30,8 @@ public class DBHelper extends SQLiteOpenHelper {
     protected final Lock readLock = readWriteLock.readLock();
     protected final Lock writeLock = readWriteLock.writeLock();
 
+    private String dbName;
+    private int dbVersion;
     private String tableName;
     private String createTableSql;
     private String insertSql;
@@ -37,8 +39,10 @@ public class DBHelper extends SQLiteOpenHelper {
     private HashMap<String, Column> columnsMap;
     private LinkedList<Column> primaryColumns;
 
-    DBHelper(Context context, String name, int verson, Class claz) {
-        super(context, name, null, verson);
+    DBHelper(Context context, String name, int version, Class claz) {
+        super(context, name, null, version);
+        dbName = name;
+        dbVersion = version;
         this.claz = claz;
         initDatabaseInfo();
         db = getWritableDatabase();
@@ -101,8 +105,8 @@ public class DBHelper extends SQLiteOpenHelper {
 
     public boolean insertAll(Collection<Object> objects) {
         writeLock.lock();
+        db.beginTransaction();
         try {
-            db.beginTransaction();
             for(Object object : objects) {
                 bindInsertStatementArgs(object);
                 insertStatement.executeInsert();
@@ -117,8 +121,8 @@ public class DBHelper extends SQLiteOpenHelper {
 
     public boolean clean() {
         writeLock.lock();
+        db.beginTransaction();
         try {
-            db.beginTransaction();
             db.execSQL(cleanSql);
             db.setTransactionSuccessful();
         } finally {
@@ -126,6 +130,48 @@ public class DBHelper extends SQLiteOpenHelper {
             writeLock.unlock();
         }
         return true;
+    }
+
+    private String genQuerySql(String[] columns) {
+        StringBuilder sql = new StringBuilder();
+        sql.append("select * from ");
+        sql.append(tableName);
+        sql.append(" where ");
+
+        for(String column : columns) {
+            sql.append(column);
+            sql.append(" = ? and ");
+        }
+
+        //delete last and word
+        sql.delete(sql.length() - 5, sql.length() - 1);
+        return sql.toString();
+    }
+
+    /**
+     * query by the columns value
+     * execute as "select * from table where column1 = arg1 and column2 = arg2 ..."
+     * @param columns
+     * @param args
+     * @return return where clumns's values equals args objects
+     */
+    public Collection<Object> query(String[] columns, String[] args) {
+        if(columns == null || columns.length == 0) return queryAll();
+        Cursor cursor = db.rawQuery(genQuerySql(columns), args);
+        return cursorToObjects(cursor);
+    }
+
+    public Collection<Object> query(String sql, String[] args) {
+        Cursor cursor = db.rawQuery(sql, args);
+        return cursorToObjects(cursor);
+    }
+
+    public Cursor queryForCursor(String[] columns, String[] args) {
+        return db.rawQuery(genQuerySql(columns), args);
+    }
+
+    public Cursor queryForCursor(String sql, String[] args) {
+        return db.rawQuery(sql, args);
     }
 
     public Collection<Object> queryAll() {
@@ -136,7 +182,10 @@ public class DBHelper extends SQLiteOpenHelper {
                 tableName, //table
                 null //cancellationSignal
         );
+        return cursorToObjects(cursor);
+    }
 
+    private Collection<Object> cursorToObjects(Cursor cursor) {
         LinkedList<Object> list = new LinkedList<Object>();
         if(cursor != null) {
             while (cursor.moveToNext()) {
@@ -146,6 +195,7 @@ public class DBHelper extends SQLiteOpenHelper {
                 }
             }
         }
+        cursor.close();
         return list;
     }
 

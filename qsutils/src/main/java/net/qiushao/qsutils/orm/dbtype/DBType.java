@@ -50,11 +50,11 @@ public abstract class DBType {
         dbTypeMap.put(byte[].class, blobType);
     }
 
-    public static DBType getDBType(Class<?> T) {
-        return dbTypeMap.get(T);
+    public static DBType getDBType(Class<?> claz) {
+        return dbTypeMap.get(claz);
     }
 
-    public static boolean isSurpportType(Class<?> type) {
-        return dbTypeMap.containsKey(type);
+    public static boolean isSurpportType(Class<?> claz) {
+        return dbTypeMap.containsKey(claz);
     }
 }
