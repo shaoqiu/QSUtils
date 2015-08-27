@@ -10,7 +10,6 @@ import java.util.concurrent.ConcurrentHashMap;
  * Created by shaoqiu on 2015-8-21.
  */
 public class DBFactory {
-
     private static DBFactory instance;
     private ConcurrentHashMap<String, DBHelper> dbMap;
     private Context context;
@@ -31,19 +30,16 @@ public class DBFactory {
         dbMap = new ConcurrentHashMap<String, DBHelper>();
     }
 
-    public synchronized DBHelper getDBHelper(Class<?> T) throws DBAnnotationException {
-        String databaseName = T.getName().replace('.', '_');
+    public synchronized DBHelper getDBHelper(Class<?> claz) {
+        String databaseName = claz.getName().replace('.', '_') + ".db";
 
         if (dbMap.containsKey(databaseName)) {
             return dbMap.get(databaseName);
         }
 
-        Database database = T.getAnnotation(Database.class);
-        if (database == null) {
-            throw new DBAnnotationException("Class " + T.getName() + " not annotation by @Database!");
-        }
-
-        DBHelper db = new DBHelper(context, new DBInfo(T));
+        Database database = claz.getAnnotation(Database.class);
+        if(database == null) return null;
+        DBHelper db = new DBHelper(context, databaseName, database.version(), claz);
         dbMap.put(databaseName, db);
         return db;
     }

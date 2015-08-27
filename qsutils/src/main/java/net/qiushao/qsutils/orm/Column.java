@@ -1,6 +1,6 @@
 package net.qiushao.qsutils.orm;
 
-import android.database.Cursor;
+import net.qiushao.qsutils.orm.dbtype.DBType;
 
 import java.lang.reflect.Field;
 
@@ -9,8 +9,8 @@ import java.lang.reflect.Field;
  */
 class Column {
     public String name = "";
-    public int type = Cursor.FIELD_TYPE_NULL;
+    public DBType type = null;
+    public int index = 0;
     public boolean primary = false;
     public Field field = null;
-    public int index = 0;
 }
