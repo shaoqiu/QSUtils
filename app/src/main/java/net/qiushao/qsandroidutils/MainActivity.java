@@ -5,12 +5,10 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 
 import net.qiushao.qsutils.log.Print;
-import net.qiushao.qsutils.orm.DBAnnotationException;
 import net.qiushao.qsutils.orm.DBFactory;
 import net.qiushao.qsutils.orm.DBHelper;
 
 import java.util.Collection;
-import java.util.LinkedList;
 
 public class MainActivity extends AppCompatActivity {
     @Override
@@ -18,51 +16,59 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        final LinkedList<Object> list = new LinkedList<Object>();
-        for (int i = 0; i < 10000; i++) {
-            Person person = new Person();
-            person.id = i;
-            person.name = "name" + i;
-            person.age = 26;
-            person.weight = 52;
-            person.marry = false;
-            list.add(person);
-        }
-
         findViewById(R.id.insert).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                addPerson(list);
+                addPerson();
             }
         });
 
         findViewById(R.id.query).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                try {
-                    qeuryPerson();
-                } catch (DBAnnotationException e) {
-                    e.printStackTrace();
-                }
+                qeuryPerson();
             }
         });
     }
 
-    private void addPerson(LinkedList<Object> list) {
-        long start = System.currentTimeMillis();
+    private void addPerson() {
+
         DBHelper db = DBFactory.getInstance(this).getDBHelper(Person.class);
-        db.insertAll(list);
-        long end = System.currentTimeMillis();
-        Print.d("time = " + (end - start));
+
+        Person person = new Person();
+        person.id = 4;
+        person.name = "shaoqiu";
+        person.age = 26;
+        person.weight = 53.5;
+        person.marry = true;
+        db.insert(person);
+
+        person.id = 5;
+        person.name = "junjun";
+        person.age = 23;
+        person.weight = 50.5;
+        person.marry = false;
+        db.insert(person);
+
+        person.id = 6;
+        person.name = "qiuqiu";
+        person.age = 25;
+        person.weight = 52.5;
+        person.marry = false;
+        db.insert(person);
     }
 
-    private void qeuryPerson() throws DBAnnotationException {
+    private void qeuryPerson() {
         DBHelper db = DBFactory.getInstance(this).getDBHelper(Person.class);
-        Collection<Object> persons = db.queryAll();
+        Collection<Object> persons = db.query(new String[]{"name"}, new String[]{"junjun"});
+
         for (Object object : persons) {
             Person person = (Person) object;
             Print.d("person.id = " + person.id);
             Print.d("person.name = " + person.name);
+            Print.d("person.age = " + person.age);
+            Print.d("person.wage = " + person.weight);
+            Print.d("person.marry = " + person.marry);
         }
     }
 }

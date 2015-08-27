@@ -11,6 +11,7 @@
     <JAVADOC />
     <SOURCES>
       <root url="jar://D:/common-tools/adt-bundle-windows-x86_64-20140702/sdk/extras/android/m2repository/com/android/support/support-v4/22.2.1/support-v4-22.2.1-sources.jar!/" />
+      <root url="jar://$USER_HOME$/android/adt-bundle-linux/sdk/extras/android/m2repository/com/android/support/support-v4/22.2.1/support-v4-22.2.1-sources.jar!/" />
     </SOURCES>
   </library>
 </component>

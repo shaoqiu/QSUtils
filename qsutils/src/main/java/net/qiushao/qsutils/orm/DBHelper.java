@@ -156,33 +156,58 @@ public class DBHelper extends SQLiteOpenHelper {
      * @return return where clumns's values equals args objects
      */
     public Collection<Object> query(String[] columns, String[] args) {
-        if(columns == null || columns.length == 0) return queryAll();
-        Cursor cursor = db.rawQuery(genQuerySql(columns), args);
-        return cursorToObjects(cursor);
+        readLock.lock();
+        try {
+            if(columns == null || columns.length == 0) return queryAll();
+            Cursor cursor = db.rawQuery(genQuerySql(columns), args);
+            return cursorToObjects(cursor);
+        } finally {
+            readLock.unlock();
+        }
     }
 
     public Collection<Object> query(String sql, String[] args) {
-        Cursor cursor = db.rawQuery(sql, args);
-        return cursorToObjects(cursor);
+        readLock.lock();
+        try {
+            Cursor cursor = db.rawQuery(sql, args);
+            return cursorToObjects(cursor);
+        } finally {
+            readLock.unlock();
+        }
     }
 
     public Cursor queryForCursor(String[] columns, String[] args) {
-        return db.rawQuery(genQuerySql(columns), args);
+        readLock.lock();
+        try {
+            return db.rawQuery(genQuerySql(columns), args);
+        } finally {
+            readLock.unlock();
+        }
     }
 
     public Cursor queryForCursor(String sql, String[] args) {
-        return db.rawQuery(sql, args);
+        readLock.lock();
+        try {
+            return db.rawQuery(sql, args);
+        } finally {
+            readLock.unlock();
+        }
     }
 
     public Collection<Object> queryAll() {
-        Cursor cursor = db.rawQueryWithFactory(
-                null, //cursorFactory
-                "select * from " + tableName, //sql
-                null, //selectionArgs
-                tableName, //table
-                null //cancellationSignal
-        );
-        return cursorToObjects(cursor);
+        readLock.lock();
+        try {
+            Cursor cursor = db.rawQueryWithFactory(
+                    null, //cursorFactory
+                    "select * from " + tableName, //sql
+                    null, //selectionArgs
+                    tableName, //table
+                    null //cancellationSignal
+            );
+            return cursorToObjects(cursor);
+        } finally {
+            readLock.unlock();
+        }
     }
 
     private Collection<Object> cursorToObjects(Cursor cursor) {
