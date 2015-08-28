@@ -31,14 +31,13 @@ public class DBFactory {
     }
 
     public synchronized DBHelper getDBHelper(Class<?> claz) {
-        String databaseName = claz.getName().replace('.', '_') + ".db";
+        Database database = claz.getAnnotation(Database.class);
+        if(database == null) return null;
 
+        String databaseName = claz.getName().replace('.', '_') + ".db";
         if (dbMap.containsKey(databaseName)) {
             return dbMap.get(databaseName);
         }
-
-        Database database = claz.getAnnotation(Database.class);
-        if(database == null) return null;
         DBHelper db = new DBHelper(context, databaseName, database.version(), claz);
         dbMap.put(databaseName, db);
         return db;

@@ -12,6 +12,8 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 public @interface Database {
 
+    String name() default "";
+
     /**
      * database version
      */

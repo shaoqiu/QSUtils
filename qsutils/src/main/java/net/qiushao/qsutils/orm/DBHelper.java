@@ -119,17 +119,58 @@ public class DBHelper extends SQLiteOpenHelper {
         return true;
     }
 
-    public boolean clean() {
-        writeLock.lock();
-        db.beginTransaction();
-        try {
-            db.execSQL(cleanSql);
-            db.setTransactionSuccessful();
-        } finally {
-            db.endTransaction();
-            writeLock.unlock();
+    public void delete(String[] columns, String[] args) {
+        StringBuilder sql = new StringBuilder();
+        sql.append("delete from ");
+        sql.append(tableName);
+        sql.append(" where ");
+        for(String column : columns) {
+            sql.append(column);
+            sql.append(" = ? and ");
         }
-        return true;
+        //delete last and word
+        sql.delete(sql.length() - 5, sql.length() - 1);
+        db.execSQL(sql.toString(), args);
+    }
+
+    public void update(String[] columns, String[] args, Object object) {
+        StringBuilder sql = new StringBuilder();
+        sql.append("update ");
+        sql.append(tableName);
+        sql.append(" set ");
+
+        int bindArgsSize = args.length + columnsMap.size();
+        Object[] bindArgs = new Object[bindArgsSize];
+        int index = 0;
+
+        Iterator iterator = columnsMap.entrySet().iterator();
+        try {
+            while (iterator.hasNext()) {
+                Map.Entry entry = (Map.Entry) iterator.next();
+                Column column = (Column) entry.getValue();
+                sql.append(column.name);
+                sql.append("=?,");
+
+                bindArgs[index++] = column.field.get(object);
+            }
+            sql.deleteCharAt(sql.length()-1);
+
+            sql.append(" where ");
+            for(String column : columns) {
+                sql.append(column);
+                sql.append(" = ? and ");
+            }
+            //delete last and word
+            sql.delete(sql.length() - 5, sql.length() - 1);
+
+            for(Object arg : args) {
+                bindArgs[index++] = arg;
+            }
+
+            db.execSQL(sql.toString(), bindArgs);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     private String genQuerySql(String[] columns) {
@@ -222,6 +263,19 @@ public class DBHelper extends SQLiteOpenHelper {
         }
         cursor.close();
         return list;
+    }
+
+    public boolean clean() {
+        writeLock.lock();
+        db.beginTransaction();
+        try {
+            db.execSQL(cleanSql);
+            db.setTransactionSuccessful();
+        } finally {
+            db.endTransaction();
+            writeLock.unlock();
+        }
+        return true;
     }
 
     public void execute(String sql) {
@@ -323,5 +377,17 @@ public class DBHelper extends SQLiteOpenHelper {
 
         sql.append(values);
         return sql.toString();
+    }
+
+    public String getDBName() {
+        return dbName;
+    }
+
+    public int getDBVersion() {
+        return dbVersion;
+    }
+
+    public String getTableName() {
+        return tableName;
     }
 }
